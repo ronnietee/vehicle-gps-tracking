@@ -114,40 +114,6 @@ def get_vehicle_current(vehicle_id):
     })
 
 
-@app.route('/api/vehicles/<vehicle_id>/stats', methods=['GET'])
-def get_vehicle_stats(vehicle_id):
-    """Get aggregated statistics for a vehicle."""
-    if vehicle_id not in latest_aggregated:
-        return jsonify({'error': 'Vehicle not found'}), 404
-    
-    aggregated = latest_aggregated[vehicle_id]
-    stats = vehicle_stats.get(vehicle_id, {})
-    
-    return jsonify({
-        'vehicle_id': vehicle_id,
-        'last_update': stats.get('last_update'),
-        'current_window': {
-            'window_start': aggregated['window_start'],
-            'window_end': aggregated['window_end'],
-            'avg_speed': aggregated['avg_speed'],
-            'max_speed': aggregated['max_speed'],
-            'min_speed': aggregated['min_speed'],
-            'distance_traveled': aggregated['distance_traveled'],
-            'data_points': aggregated['data_points_count']
-        },
-        'location': {
-            'start': {
-                'latitude': aggregated['first_latitude'],
-                'longitude': aggregated['first_longitude']
-            },
-            'end': {
-                'latitude': aggregated['last_latitude'],
-                'longitude': aggregated['last_longitude']
-            }
-        }
-    })
-
-
 @app.route('/api/aggregates', methods=['GET'])
 def get_aggregates():
     """Get aggregated statistics across all vehicles."""
@@ -200,22 +166,6 @@ def stream_updates():
             time.sleep(5)
     
     return Response(stream_with_context(generate()), mimetype='text/event-stream')
-
-
-@app.route('/api/vehicles/<vehicle_id>/recent', methods=['GET'])
-def get_vehicle_recent(vehicle_id):
-    """Get recent GPS points for a vehicle."""
-    limit = int(os.getenv('RECENT_POINTS_LIMIT', '50'))
-    
-    if vehicle_id not in latest_raw:
-        return jsonify({'error': 'Vehicle not found'}), 404
-    
-    recent_points = latest_raw[vehicle_id][-limit:]
-    return jsonify({
-        'vehicle_id': vehicle_id,
-        'points': recent_points,
-        'count': len(recent_points)
-    })
 
 
 def start_kafka_consumers():

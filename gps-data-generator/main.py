@@ -22,9 +22,9 @@ class GPSDataGenerator:
         self.vehicles = []
         self.running = True
 
-    def initialize_vehicles(self, count=1):
+    def initialize_vehicles(self, count=5):
         """
-        Initialize vehicle fleet with starting positions. Default is one vehicle
+        Initialize vehicle fleet with starting positions. Default is five vehicles
         more vehicles can be added for simulation
         """
         # South Africa, Johannesburg coordinates
@@ -48,13 +48,14 @@ class GPSDataGenerator:
         """
         Generate a single GPS data point for a vehicle. This has been 
         randomly generated for this project so it will not coincide with 
-        actual roads
+        actual Joburg roads. Also, movements may not be 100% convincing of an actual
+        car movement despite the effort made in this method to achieve this
         """
         # Simulate movement
         vehicle['lat'] += random.uniform(-0.001, 0.001)
         vehicle['lon'] += random.uniform(-0.001, 0.001)
         
-        # Keep within reasonable bounds (J'burg area)
+        # Keep within reasonable bounds (J'burg area). 
         vehicle['lat'] = max(-27.0, min(-25.0, vehicle['lat']))
         vehicle['lon'] = max(26.0, min(30.0, vehicle['lon']))
         
@@ -127,7 +128,7 @@ class GPSDataGenerator:
 
 def main():
     kafka_bootstrap = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
-    vehicles_count = int(os.getenv('VEHICLES_COUNT', '1'))
+    vehicles_count = int(os.getenv('VEHICLES_COUNT', '5'))
     messages_per_second = int(os.getenv('MESSAGES_PER_SECOND', '100'))
     
     print(f"Kafka Bootstrap Servers: {kafka_bootstrap}")
