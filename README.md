@@ -39,3 +39,44 @@ Data Generator → Kafka (gps-raw-data)
 - Docker and Docker Compose installed
 - Python 3.11 recommended. Compatibility challenges with kafka-python can be faced with later versions
 - At least 4GB RAM available for Docker containers
+
+
+## Getting Started (Installation and Usage)
+
+1. **Clone the repository** (or use this local project):
+   ```bash
+   git clone "https://github.com/ronnietee/vehicle-gps-tracking"
+   cd data-engineering-project
+   ```
+
+2. **Set up environment variables**:
+   The user has latitude to configure;
+   - The number of vehicles to generate data for
+   - Messages generated per second
+   - Window period for aggregation of speed and distance
+   Set these up in the docker-compose.yml file
+
+3. **Start all services**:
+   ```bash
+   docker-compose up -d
+   ```
+
+4. **Check service status**:
+   ```bash
+   docker-compose ps
+   ```
+
+5. **View logs and monitor**:
+   ```bash
+   docker-compose logs -f [service-name]
+   ```
+   You can also open the kafka UI on "http://localhost:8080" to monitor kafka topics and messages
+
+5. **Make API calls to retrieve aggregated or raw metrics**:
+   base_url: "http://localhost:8000"
+   Available endpoints:
+        - **List of vehicles**: `/api/vehicles`
+        - **Current vehicle location**: `/api/vehicles/<vehicle_id>/current`
+        - **Events stream**: `/api/stream`
+        - **Aggregated metrics**: `/api/aggregates`
+        - **Health check**: `/health`
